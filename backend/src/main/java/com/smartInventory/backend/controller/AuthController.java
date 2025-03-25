@@ -10,6 +10,7 @@ import com.smartInventory.backend.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,8 +51,6 @@ public class AuthController {
     }
 
 
-
-    //  Create a new User (Admin-Only)
     @PostMapping("/create-user")
     public ResponseEntity<?> createUser(@RequestBody UserRequest user) {
         ResponseEntity<?> createdUser = userService.createUser(
@@ -67,6 +66,7 @@ public class AuthController {
 
     //  Create another Admin (Admin-Only)
     @PostMapping("/create-admin")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createAdmin(@RequestBody User user) {
         ResponseEntity<?> createdAdmin = userService.createUser(
                 user.getEmail(),

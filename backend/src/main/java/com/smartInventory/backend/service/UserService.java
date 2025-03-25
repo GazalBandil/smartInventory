@@ -27,7 +27,7 @@ public class UserService {
     }
 
 
-    // ✅ Create User (ONLY Admin Can Call This)
+    //  Create User (ONLY Admin Can Call This)
     public ResponseEntity<?> createUser(String email, String firstName, String lastName, String username, String password, String contactNo, Role role) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("User with this email already exists!");

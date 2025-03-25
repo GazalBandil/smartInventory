@@ -26,14 +26,14 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService; // ✅ Inject UserDetailsService
+    private CustomUserDetailsService customUserDetailsService; // Inject UserDetailsService
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**", "/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/create-user").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
