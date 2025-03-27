@@ -3,7 +3,7 @@ package com.smartInventory.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "products")
@@ -28,7 +28,7 @@ public class Product {
     private BigDecimal price;
 
     @Column(name = "expiry_date")
-    private LocalDateTime expiryDate;
+    private LocalDate expiryDate;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -39,11 +39,11 @@ public class Product {
     private Supplier supplier;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDate.now();
     }
 
 

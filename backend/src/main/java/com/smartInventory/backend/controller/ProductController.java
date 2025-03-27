@@ -1,6 +1,7 @@
 package com.smartInventory.backend.controller;
 
 import com.smartInventory.backend.dtos.ProductDTO;
+import com.smartInventory.backend.dtos.ProductExpiryAlert;
 import com.smartInventory.backend.model.Product;
 import com.smartInventory.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,12 +62,12 @@ public class ProductController {
 //        return productservice.getLowStockProducts();
 //    }
 //
-//    //ecpiring product api alert
-//    @GetMapping("/expiring")
-//    public List<ProductDTO> getExpiringProducts() {
-//        return productservice.getExpiringProducts();
-//    }
 
+    // API to get expiry alerts
+    @GetMapping("/expiry")
+    public List<ProductExpiryAlert> getExpiryAlerts() {
+        return productService.getExpiryAlerts();
+    }
   
 
 

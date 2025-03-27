@@ -3,6 +3,7 @@ package com.smartInventory.backend.service;
 
 import com.smartInventory.backend.dtos.ProductDTO;
 
+import com.smartInventory.backend.dtos.ProductExpiryAlert;
 import com.smartInventory.backend.model.Category;
 import com.smartInventory.backend.model.Product;
 import com.smartInventory.backend.model.Supplier;
@@ -13,16 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 public class ProductService {
 
 
-//    private static final int LOW_STOCK_THRESHOLD = 10; // Alert if stock is below 10
-//    private static final int EXPIRY_DAYS_THRESHOLD = 7; // Alert if expiry is within 7 days
 
     @Autowired
     private ProductRepository productRepository;
@@ -52,24 +53,24 @@ public class ProductService {
         product.setExpiryDate(productRequest.getExpiryDate());
         product.setCategory(category);
         product.setSupplier(supplier);
-        product.setCreatedAt(LocalDateTime.now());
+        product.setCreatedAt(LocalDate.now());
 
         // Save product to DB
         return productRepository.save(product);
     }
 
-    // ✅ GET Product by ID
+    // GET Product by ID
     public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
     }
 
-    // ✅ GET All Products
+    // GET All Products
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    // ✅ UPDATE Product by ID
+    // UPDATE Product by ID
     @Transactional
     public Product updateProduct(Long id, ProductDTO productRequest) {
         Product existingProduct = productRepository.findById(id)
@@ -99,7 +100,7 @@ public class ProductService {
         return productRepository.save(existingProduct);
     }
 
-    // ✅ DELETE Product by ID
+    //  DELETE Product by ID
     @Transactional
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
@@ -108,6 +109,21 @@ public class ProductService {
         productRepository.delete(product);
     }
 
+    // Product expiry alert
+    public List<ProductExpiryAlert> getExpiryAlerts() {
+        LocalDate today = LocalDate.now();
+        LocalDate alertThreshold = today.plusDays(15);
+
+        List<Product> expiringProducts = productRepository.findByExpiryDateBetween(today, alertThreshold);
+
+        return expiringProducts.stream()
+                .map(product -> {
+                    long daysLeft = ChronoUnit.DAYS.between(today, product.getExpiryDate());
+                    String message = "This product will expire in " + daysLeft + " days.";
+                    return new ProductExpiryAlert(product.getName(), product.getExpiryDate(), message);
+                })
+                .collect(Collectors.toList());
+    }
 
 
 
