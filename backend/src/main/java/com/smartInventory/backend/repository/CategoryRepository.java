@@ -1,7 +1,6 @@
 package com.smartInventory.backend.repository;
 
 import com.smartInventory.backend.model.Category;
-import com.smartInventory.backend.model.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,9 +1,11 @@
 package com.smartInventory.backend.controller;
 
 import com.smartInventory.backend.dtos.ProductDTO;
+import com.smartInventory.backend.model.Product;
 import com.smartInventory.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -12,52 +14,58 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductService productservice;
+    private ProductService productService;
 
-  // create product
-  @PostMapping("/add-item")
-  @PreAuthorize("hasRole('ADMIN')")
-  public ProductDTO addProduct(@RequestBody ProductDTO productDTO) {
-      return productservice.addProduct(productDTO);
-  }
+    // @Autowired
+    // private ProductRepository productRepository;
 
-  //get all the product
-  @GetMapping("/get-item")
-    public List<ProductDTO> getAllProducts() {
-        return productservice.getAllProducts();
-  }
 
-  // update product
-  @PutMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
-  public ProductDTO updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-      return productservice.updateProduct(id, productDTO);
-  }
-
-   //Delete the product
-  @DeleteMapping("/{id}")
-  public String deleteProduct(@PathVariable Long id) {
-      productservice.deleteProduct(id);
-      return "Product is deleted";
-  }
-    // update product consumption
-    @PutMapping("/{id}/consume")
-    public void consumeProduct(@PathVariable Long id, @RequestParam int quantity) {
-        productservice.consumeProduct(id, quantity);
+    @PostMapping("/add-item")
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO) {
+        Product product = productService.createProduct(productDTO);
+        return ResponseEntity.ok(product);
     }
 
-
-    //low stock api
-    @GetMapping("/low-stock")
-    public List<ProductDTO> getLowStockProducts() {
-        return productservice.getLowStockProducts();
+    // ✅ GET Product by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Product product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
     }
 
-    //ecpiring product api alert
-    @GetMapping("/expiring")
-    public List<ProductDTO> getExpiringProducts() {
-        return productservice.getExpiringProducts();
+    // ✅ GET All Products
+    @GetMapping
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
     }
+
+    // ✅ UPDATE Product by ID (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productRequest) {
+        Product updatedProduct = productService.updateProduct(id, productRequest);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    // ✅ DELETE Product by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Product deleted successfully.");
+    }
+
+//
+//    //low stock api
+//    @GetMapping("/low-stock")
+//    public List<ProductDTO> getLowStockProducts() {
+//        return productservice.getLowStockProducts();
+//    }
+//
+//    //ecpiring product api alert
+//    @GetMapping("/expiring")
+//    public List<ProductDTO> getExpiringProducts() {
+//        return productservice.getExpiringProducts();
+//    }
 
   
 

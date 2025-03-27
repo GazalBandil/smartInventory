@@ -2,7 +2,6 @@ package com.smartInventory.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -21,6 +20,6 @@ public class Category {
     @NotBlank(message = "Name is required")
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Product> product;
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+//    private List<Product> products;
 }

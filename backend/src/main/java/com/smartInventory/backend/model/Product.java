@@ -30,14 +30,11 @@ public class Product {
     @Column(name = "expiry_date")
     private LocalDateTime expiryDate;
 
-    @Column(name = "image_url", length = 255)
-    private String imageUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
