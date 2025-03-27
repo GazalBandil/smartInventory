@@ -4,6 +4,7 @@ package com.smartInventory.backend.service;
 import com.smartInventory.backend.dtos.ProductDTO;
 
 import com.smartInventory.backend.dtos.ProductExpiryAlert;
+
 import com.smartInventory.backend.model.Category;
 import com.smartInventory.backend.model.Product;
 import com.smartInventory.backend.model.Supplier;
@@ -22,8 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
-
-
 
     @Autowired
     private ProductRepository productRepository;

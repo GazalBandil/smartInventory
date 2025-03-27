@@ -13,6 +13,7 @@ public class User {
     private int id;
 
     @NotBlank(message = "Email ID is required")
+//    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@company\\.com$", message = "Only company emails (@company.com) are allowed")
     @Column(name = "email_id", nullable = false, unique = true, length = 100)
     private String email;
 

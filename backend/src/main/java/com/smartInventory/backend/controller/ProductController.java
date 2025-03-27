@@ -5,6 +5,7 @@ import com.smartInventory.backend.dtos.ProductExpiryAlert;
 import com.smartInventory.backend.model.Product;
 import com.smartInventory.backend.repository.ProductRepository;
 import com.smartInventory.backend.service.ProductService;
+import com.smartInventory.backend.service.UserActivityLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,14 @@ public class ProductController {
      @Autowired
      private ProductRepository productRepository;
 
+    @Autowired
+    private UserActivityLogService userActivityLogService;
+
 
     @PostMapping("/add-item")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO , @RequestParam String username) {
         Product product = productService.createProduct(productDTO);
+        userActivityLogService.logActivity(username, "ADD_PRODUCT", "Added new product: " + product.getName());
         return ResponseEntity.ok(product);
     }
 
@@ -48,15 +53,17 @@ public class ProductController {
 
     // ✅ UPDATE Product by ID (PUT)
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productRequest) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productRequest,  @RequestParam String username) {
         Product updatedProduct = productService.updateProduct(id, productRequest);
+        userActivityLogService.logActivity(username, "UPDATE_PRODUCT", "Updated product: " + updatedProduct.getName());
         return ResponseEntity.ok(updatedProduct);
     }
 
     // ✅ DELETE Product by ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id,  @RequestParam String username) {
         productService.deleteProduct(id);
+        userActivityLogService.logActivity(username, "DELETE_PRODUCT", "Deleted product with ID: " + id);
         return ResponseEntity.ok("Product deleted successfully.");
     }
 

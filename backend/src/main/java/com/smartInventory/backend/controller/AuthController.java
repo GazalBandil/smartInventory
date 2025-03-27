@@ -6,6 +6,7 @@ import com.smartInventory.backend.enums.Role;
 import com.smartInventory.backend.model.User;
 import com.smartInventory.backend.security.JwtUtil;
 import com.smartInventory.backend.service.CustomUserDetailsService;
+import com.smartInventory.backend.service.UserActivityLogService;
 import com.smartInventory.backend.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserActivityLogService userActivityLogService;
+
     // ✅ Login Admin and Generate JWT Token
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -46,6 +50,7 @@ public class AuthController {
         // Generate JWT token
         String token = jwtUtil.generateToken(userDetails.getUsername());
 
+        userActivityLogService.logActivity(userDetails.getUsername(), "LOGIN", "User logged in successfully.");
         // Return the token
         return ResponseEntity.ok(token);
     }
