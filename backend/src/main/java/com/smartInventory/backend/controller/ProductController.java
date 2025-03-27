@@ -3,12 +3,17 @@ package com.smartInventory.backend.controller;
 import com.smartInventory.backend.dtos.ProductDTO;
 import com.smartInventory.backend.dtos.ProductExpiryAlert;
 import com.smartInventory.backend.model.Product;
+import com.smartInventory.backend.repository.ProductRepository;
 import com.smartInventory.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/products")
@@ -17,8 +22,8 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // @Autowired
-    // private ProductRepository productRepository;
+     @Autowired
+     private ProductRepository productRepository;
 
 
     @PostMapping("/add-item")
@@ -55,24 +60,30 @@ public class ProductController {
         return ResponseEntity.ok("Product deleted successfully.");
     }
 
-//
-//    //low stock api
-//    @GetMapping("/low-stock")
-//    public List<ProductDTO> getLowStockProducts() {
-//        return productservice.getLowStockProducts();
-//    }
-//
+
 
     // API to get expiry alerts
     @GetMapping("/expiry")
     public List<ProductExpiryAlert> getExpiryAlerts() {
         return productService.getExpiryAlerts();
     }
-  
+
+    @PostMapping("/consume/{id}/{quantity}")
+    public ResponseEntity<String> consumeProduct(@PathVariable Long id , @PathVariable Integer quantity){
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        if (product.getQuantity() < quantity) {
+            return ResponseEntity.badRequest().body("Not enough stock available.");
+        }
+
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
+
+        return ResponseEntity.ok("Product quantity updated successfully.");
 
 
-
-
+    }
 
 
 }
