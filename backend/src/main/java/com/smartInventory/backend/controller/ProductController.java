@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,6 +32,7 @@ public class ProductController {
 
 
     @PostMapping("/add-item")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO , @RequestParam String username) {
         Product product = productService.createProduct(productDTO);
         userActivityLogService.logActivity(username, "ADD_PRODUCT", "Added new product: " + product.getName());
@@ -53,6 +55,7 @@ public class ProductController {
 
     // ✅ UPDATE Product by ID (PUT)
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productRequest,  @RequestParam String username) {
         Product updatedProduct = productService.updateProduct(id, productRequest);
         userActivityLogService.logActivity(username, "UPDATE_PRODUCT", "Updated product: " + updatedProduct.getName());
@@ -61,6 +64,7 @@ public class ProductController {
 
     // ✅ DELETE Product by ID
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id,  @RequestParam String username) {
         productService.deleteProduct(id);
         userActivityLogService.logActivity(username, "DELETE_PRODUCT", "Deleted product with ID: " + id);
@@ -91,6 +95,7 @@ public class ProductController {
 
 
     }
+
 
 
 }
