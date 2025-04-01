@@ -4,6 +4,7 @@ import com.smartInventory.backend.dtos.LoginRequest;
 import com.smartInventory.backend.dtos.UserRequest;
 import com.smartInventory.backend.enums.Role;
 import com.smartInventory.backend.model.User;
+import com.smartInventory.backend.repository.UserRepository;
 import com.smartInventory.backend.security.JwtUtil;
 import com.smartInventory.backend.service.CustomUserDetailsService;
 import com.smartInventory.backend.service.UserActivityLogService;
@@ -14,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,9 +26,6 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
@@ -35,27 +33,23 @@ public class AuthController {
 
     @Autowired
     private UserActivityLogService userActivityLogService;
+    @Autowired
+    private UserRepository userRepository;
 
-    // ✅ Login Admin and Generate JWT Token
+    // Login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        // Authenticate user credentials
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
-
-        // Load user details
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
-
-        // Generate JWT token
-        String token = jwtUtil.generateToken(userDetails.getUsername());
-
-        userActivityLogService.logActivity(userDetails.getUsername(), "LOGIN", "User logged in successfully.");
-        // Return the token
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginRequest.getEmail()));
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole()); // Use user.getRole()
+        userActivityLogService.logActivity(user.getEmail(), "LOGIN", "User logged in successfully.");
         return ResponseEntity.ok(token);
     }
 
-
+//    Create user api
     @PostMapping("/create-user")
     public ResponseEntity<?> createUser(@RequestBody UserRequest user) {
         ResponseEntity<?> createdUser = userService.createUser(
@@ -68,7 +62,6 @@ public class AuthController {
                 Role.USER);
         return ResponseEntity.ok(createdUser);
     }
-
     //  Create another Admin (Admin-Only)
     @PostMapping("/create-admin")
     @PreAuthorize("hasRole('ADMIN')")

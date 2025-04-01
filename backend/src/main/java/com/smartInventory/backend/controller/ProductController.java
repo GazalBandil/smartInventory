@@ -30,7 +30,7 @@ public class ProductController {
     @Autowired
     private UserActivityLogService userActivityLogService;
 
-
+    //new product add api
     @PostMapping("/add-item")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO , @RequestParam String username) {
@@ -39,21 +39,21 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    // ✅ GET Product by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.getProductById(id);
-        return ResponseEntity.ok(product);
+    // get product by name
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<Product>> searchProductsByName(@PathVariable String name) {
+        List<Product> products = productService.getProductByName(name);
+        return ResponseEntity.ok(products);
     }
 
-    // ✅ GET All Products
+    // GET All Products
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 
-    // ✅ UPDATE Product by ID (PUT)
+    // UPDATE Product by ID (PUT)
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productRequest,  @RequestParam String username) {
@@ -62,16 +62,14 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
 
-    // ✅ DELETE Product by ID
+    //DELETE Product by ID
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id,  @RequestParam String username) {
         productService.deleteProduct(id);
-        userActivityLogService.logActivity(username, "DELETE_PRODUCT", "Deleted product with ID: " + id);
+        userActivityLogService.logActivity(username, "DELETE_PRODUCT", "Deleted product with ID: " + id );
         return ResponseEntity.ok("Product deleted successfully.");
     }
-
-
 
     // API to get expiry alerts
     @GetMapping("/expiry")
@@ -83,17 +81,12 @@ public class ProductController {
     public ResponseEntity<String> consumeProduct(@PathVariable Long id , @PathVariable Integer quantity){
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-
         if (product.getQuantity() < quantity) {
             return ResponseEntity.badRequest().body("Not enough stock available.");
         }
-
         product.setQuantity(product.getQuantity() - quantity);
         productRepository.save(product);
-
         return ResponseEntity.ok("Product quantity updated successfully.");
-
-
     }
 
 
