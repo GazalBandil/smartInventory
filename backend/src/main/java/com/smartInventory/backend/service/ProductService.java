@@ -58,10 +58,13 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    // GET Product by ID
-    public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
+    //get element by name
+    public List<Product> getProductByName(String name) {
+        List<Product> products = productRepository.findByNameContainingIgnoreCase(name);
+        if (products.isEmpty()) {
+            throw new RuntimeException("No products found with name: " + name);
+        }
+        return products;
     }
 
     // GET All Products

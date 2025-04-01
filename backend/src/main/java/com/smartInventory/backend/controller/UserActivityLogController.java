@@ -17,6 +17,7 @@ public class UserActivityLogController {
     @Autowired
     private UserActivityLogService userActivityLogService;
 
+    //fetch api to get all users activity log
     @GetMapping("/{username}")
     public ResponseEntity<List<UserActivityLog>> getUserActivityLogs(@PathVariable String username) {
         List<UserActivityLog> logs = userActivityLogService.getUserActivityLogs(username);

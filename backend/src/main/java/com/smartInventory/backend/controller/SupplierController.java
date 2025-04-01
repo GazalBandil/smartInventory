@@ -6,8 +6,6 @@ import com.smartInventory.backend.model.Supplier;
 import com.smartInventory.backend.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/supplier")
-@PreAuthorize("hasRole('ADMIN')")
+
 public class SupplierController {
 
     @Autowired
@@ -23,6 +21,7 @@ public class SupplierController {
 
     // create supplier
     @PostMapping("/add-supplier")
+
     public ResponseEntity<Supplier> addSupplier(@RequestBody SupplierDTO supplierDTO){
          return ResponseEntity.ok(supplierservice.createSupplier(supplierDTO));
 

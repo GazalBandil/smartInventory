@@ -20,6 +20,7 @@ public class AlertController {
 
     private static final int LOW_STOCK_THRESHOLD = 10;
 
+    //Low stock api
     @GetMapping("/low-stock")
     public ResponseEntity<List<LowStockAlertDTO>> getLowStockAlerts() {
         List<Product> lowStockProducts = productRepository.findByQuantityLessThan(LOW_STOCK_THRESHOLD);

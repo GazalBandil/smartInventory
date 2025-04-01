@@ -40,7 +40,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(password)); // Hash password
         user.setContactNo(contactNo);
         user.setRole(role); // Assign role
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getUsername() , user.getRole());
 
          userRepository.save(user);
          return new ResponseEntity<>(token , HttpStatus.CREATED);
