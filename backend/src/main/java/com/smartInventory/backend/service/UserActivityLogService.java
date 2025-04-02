@@ -21,4 +21,8 @@ public class UserActivityLogService {
     public List<UserActivityLog> getUserActivityLogs(String username) {
         return userActivityLogRepository.findByUsernameOrderByTimestampDesc(username);
     }
+
+    public List<UserActivityLog> getAllUserActivity() {
+        return userActivityLogRepository.findAll();  // Fetch all logs from DB
+    }
 }

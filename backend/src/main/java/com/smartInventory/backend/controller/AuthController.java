@@ -78,8 +78,9 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(HttpServletResponse response){
+    public ResponseEntity<?> logoutUser(HttpServletResponse response , @RequestParam String username){
         response.setHeader("Authorization", "");
+        userActivityLogService.logActivity(username, "Logout", "User loggedOut.");
         return ResponseEntity.ok("Logged out successfully");
     }
 

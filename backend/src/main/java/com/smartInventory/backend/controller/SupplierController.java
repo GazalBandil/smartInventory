@@ -4,6 +4,7 @@ package com.smartInventory.backend.controller;
 import com.smartInventory.backend.dtos.SupplierDTO;
 import com.smartInventory.backend.model.Supplier;
 import com.smartInventory.backend.service.SupplierService;
+import com.smartInventory.backend.service.UserActivityLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +20,15 @@ public class SupplierController {
     @Autowired
     private SupplierService supplierservice;
 
+    @Autowired
+    private UserActivityLogService userActivityLogService;
+
     // create supplier
     @PostMapping("/add-supplier")
-
-    public ResponseEntity<Supplier> addSupplier(@RequestBody SupplierDTO supplierDTO){
-         return ResponseEntity.ok(supplierservice.createSupplier(supplierDTO));
+    public ResponseEntity<Supplier> addSupplier(@RequestBody SupplierDTO supplierDTO, @RequestParam String username){
+         Supplier savedSupplier = supplierservice.createSupplier(supplierDTO);
+        userActivityLogService.logActivity(username, "ADD_Supplier", "Added new Supplier: " + savedSupplier.getName());
+        return ResponseEntity.ok(savedSupplier);
 
     }
 
