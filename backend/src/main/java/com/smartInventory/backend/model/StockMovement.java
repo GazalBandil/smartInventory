@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 // package com.smartInventory.backend.model;
 
-import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,9 +18,8 @@ public class StockMovement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long movementId;
-
     private Long itemId;
-    private Long userId;
+    private String productName;
     private int quantityChanged;
 
     // @Enumerated(EnumType.STRING)
@@ -32,9 +28,9 @@ public class StockMovement {
     private LocalDateTime timestamp;
 
     // Constructor for easy instantiation
-    public StockMovement(Long itemId, Long userId, int quantityChanged, String movementType) {
+    public StockMovement(Long itemId, String productName, int quantityChanged, String movementType) {
         this.itemId = itemId;
-        this.userId = userId;
+        this.productName = productName;
         this.quantityChanged = quantityChanged;
         this.movementType = movementType;
         this.timestamp = LocalDateTime.now();

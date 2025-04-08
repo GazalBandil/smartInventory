@@ -19,13 +19,7 @@ public class StockMovementController {
         this.stockMovementService = stockMovementService;
         this.reportGenerationService = reportGenerationService;
     }
-
-    // Record a new stock movement
-    @PostMapping("/record")
-    public StockMovement recordStockMovement(@RequestBody StockMovement stockMovement) {
-        return stockMovementService.recordStockMovement(stockMovement);
-    }
-
+    
     // Download daily stock movement report in CSV
     @GetMapping("/report/daily")
     public void downloadDailyStockReport(HttpServletResponse response) throws IOException {

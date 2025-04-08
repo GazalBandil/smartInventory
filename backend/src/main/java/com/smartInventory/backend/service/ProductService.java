@@ -121,7 +121,13 @@ public class ProductService {
         return expiringProducts.stream()
                 .map(product -> {
                     long daysLeft = ChronoUnit.DAYS.between(today, product.getExpiryDate());
-                    String message = "This product will expire in " + daysLeft + " days.";
+                    String message;
+                    if(daysLeft == 0){
+                       message = "This product is expired Delete this product";
+                    }
+                    else {
+                        message = "This product will expire in " + daysLeft + " days.";
+                    }
                     return new ProductExpiryAlert(product.getName(), product.getExpiryDate(), message);
                 })
                 .collect(Collectors.toList());
